@@ -2,21 +2,42 @@
 	<b-container>
 	  		
 	  		<h2>Veranstalungs-Kalender</h2>
+	  			
+	  		<b-row v-if="this.$parent.events.length > 0">
 	  		
-	  		<div v-if="this.$parent.events.length > 0">
+	  		  <b-button-toolbar key-nav class="pull-right"  aria-label="Toolbar">
+			   
+			    <b-button-group  size="sm" class="mx-1">
+					<b-dropdown size="sm"  class="mx-1" right text="Filtern">
+				      <b-dropdown-item>Berlin</b-dropdown-item>
+				      <b-dropdown-item>Lübeck</b-dropdown-item>
+				    </b-dropdown>
+			    </b-button-group>
+			    
+			    <b-button-group  size="sm" class="mx-1">
+					<b-btn variant="primary" v-b-modal.modal1><i class="fa fa-plus"></i>&nbsp; Event hinzufügen</b-btn>
+			    </b-button-group>
+			    
+			   </b-button-toolbar>
+	  		
+	  		</b-row>
+	  		
+	  		<b-row>
+			  <b-badge href="#" variant="primary">Filter <span class="dismiss">&times;</span> </b-badge>
+
+			</b-row>
 	  		
 	  		<b-list-group v-if="this.$parent.events.length > 0">
 			  <b-list-group-item href="#" class="flex-column align-items-start" v-for="event in this.$parent.events">
 			    
 			    <b-row>
 			        
-			       
 			        <!-- ev is in same month -->
 			        <b-col lg="2" md="3" sm="12" class="etc-same-month" v-if="new Date(event.startDate).getMonth() == new Date(event.endDate).getMonth()">
 			        	 
 			        	 
 			        	 <span class="readable-time-left" v-if="( new Date(event.startDate).getTime() - (new Date().getTime()) ) < (7 * 24 * 60 * 60 * 1000)">
-				        	 in {{ (new Date(event.startDate).getTime() - (new Date().getTime() )) | readableTime() }}
+				        	 <small>in {{ (new Date(event.startDate).getTime() - (new Date().getTime() )) | readableTime() }}</small>
 				         </span>
 			        	 
 			        	 <div v-if="new Date(event.startDate).getDay() == new Date(event.endDate).getDay()">
@@ -37,9 +58,11 @@
 			        <b-col lg="10" md="9" sm="12">
 			        	<h3 class="mb-1">{{ event.title }}</h3>
 			        	<h5>
-				        	<small><i class="fa fa-building"></i> {{event.location}}</small>
-				        	<small>&middot; {{event.brand}}</small>
-				        	
+				        	<small v-if="event.location"><i class="fa fa-building"></i> {{event.location}}</small>
+				        	<small>{{event.brand}}</small>
+				        	<small v-if="event.room"><i class="fa fa-tag"></i> {{event.room}}</small>
+				        	<small v-if="event.organiser"><i class="fa fa-user"></i> {{event.organiser}}</small>
+
 			        	</h5>
 						<p class="mb-1">
 							{{ event.description }}
@@ -49,9 +72,7 @@
 			  </b-list-group-item>
 			</b-list-group>
 			
-			  <div>
-			  <b-btn v-b-modal.modal1><i class="fa fa-add"></i> Event hinzufügen</b-btn>
-			
+			  <div>			
 			  <!-- Modal Component -->
 			  <b-modal id="modal1" title="Event hinzufügen" cancel-title="Abbrechen" ok-title="Speichern">
 			    
@@ -93,6 +114,19 @@
 					 </b-form-group>
 				     </b-col>
 				 </b-row>
+
+			      <b-form-group id="inputEventDescription"
+			                    label="Kurzbeschreibung"
+			                    label-for="inputEventDescription"
+			                    description="">
+			                    
+			       <b-form-textarea id="inputEventDescription"
+                      v-model="form.description"
+                      placeholder="(optional)"  style="min-height: 140px;">
+				   </b-form-textarea>
+				   
+			    </b-form-group>
+
 			    </b-form>
 			    
 			  </b-modal>
@@ -103,7 +137,7 @@
 			
 	  		<b-list-group>
 			  <b-list-group-item href="#" class="flex-column align-items-start">
-			    <small>Lade daten ...</small>
+			    <small>Lade Daten ...</small>
 			  </b-list-group-item>
 			</b-list-group>
 			
@@ -114,16 +148,14 @@
 </template>
 
 <script>
-
+	
 import moment from 'moment'
 import ('moment/locale/de')
-import datePicker from 'vue-bootstrap-datetimepicker';  
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'font-awesome/css/font-awesome.min.css'
 import 'bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
-
   
 export default {
   name: 'app',
@@ -134,9 +166,6 @@ export default {
 		description: String,
 	}	  
   },
-  components: {
-    datePicker
-  },
   data() {
 	return { 
 		form: {
@@ -144,20 +173,27 @@ export default {
 	        startDate: { 
 		      date: new Date(),
 			  options: {
-				  format: 'DD.MM.Y',
+				  format: 'DD.MM.Y HH:mm',
 				  useCurrent: false,
-				  sideBySide: true
+				  sideBySide: true,
+				  showClear: true,
+				  showClose: true,
+				  locale: 'de',
 			  }
         	},
         	endDate: { 
 		      date: new Date(),
 			  options: {
-				  format: 'DD.MM.Y',
+				  format: 'DD.MM.Y HH:mm',
 				  useCurrent: false,
-				  sideBySide: true
+				  sideBySide: true,
+				  showClear: true,
+				  showClose: true,
+				  locale: 'de',
 			  }
         	},
 	        description: '',
+	        room: '',
 	        location: '',
 	        brand: '',
      }
