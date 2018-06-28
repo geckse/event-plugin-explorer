@@ -53,8 +53,48 @@
 			  <b-btn v-b-modal.modal1><i class="fa fa-add"></i> Event hinzufügen</b-btn>
 			
 			  <!-- Modal Component -->
-			  <b-modal id="modal1" title="Event hinzufügen">
-			    <p class="my-4">Hello from modal!</p>
+			  <b-modal id="modal1" title="Event hinzufügen" cancel-title="Abbrechen" ok-title="Speichern">
+			    
+			    
+			    <b-form @submit="onSubmit" @reset="onReset">
+			      <b-form-group id="inputEventTitle"
+			                    label="Titel"
+			                    label-for="inputEventTitle"
+			                    description="">
+			                    
+			       <b-form-input id="inputEventTitle"
+                      type="text"
+                      v-model="form.title"
+                      required
+                      placeholder="">
+				   </b-form-input>
+			    </b-form-group>
+				
+				
+				<b-row>
+					<b-col md="6" sm="12">
+					<b-form-group id="inputEventStartDate"
+				                    label="Start-Datum"
+				                    label-for="inputEventStartDate"
+				                    description="">
+				                    
+						<date-picker id="inputEventStartDate" v-model="form.startDate" :config="form.startDate.options"></date-picker>
+	
+					 </b-form-group>
+				     </b-col>
+				     <b-col md="6" sm="12">
+					 <b-form-group id="inputEventEndDate"
+				                    label="End-Datum"
+				                    label-for="inputEventEndDate"
+				                    description="">
+				                    
+						<date-picker id="inputEventEndDate" v-model="form.endDate" :config="form.endDate.options"></date-picker>
+	
+					 </b-form-group>
+				     </b-col>
+				 </b-row>
+			    </b-form>
+			    
 			  </b-modal>
 			  </div>
 
@@ -76,13 +116,14 @@
 <script>
 
 import moment from 'moment'
-
 import ('moment/locale/de')
+import datePicker from 'vue-bootstrap-datetimepicker';  
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'font-awesome/css/font-awesome.min.css'
 
+  
 export default {
   name: 'app',
   props: {
@@ -91,6 +132,35 @@ export default {
 		startDate: String,
 		description: String,
 	}	  
+  },
+  components: {
+    datePicker
+  },
+  data() {
+	return { 
+		form: {
+	        title: '',
+	        startDate: { 
+		      date: new Date(),
+			  options: {
+				  format: 'DD.MM.Y',
+				  useCurrent: false,
+				  sideBySide: true
+			  }
+        	},
+        	endDate: { 
+		      date: new Date(),
+			  options: {
+				  format: 'DD.MM.Y',
+				  useCurrent: false,
+				  sideBySide: true
+			  }
+        	},
+	        description: '',
+	        location: '',
+	        brand: '',
+     }
+    };
   },
   filters: {
 	regularDate(date) {
@@ -106,6 +176,17 @@ export default {
 		console.log(date);
 		return moment.duration(date).locale('de').humanize();
 	},		
-  }	
+  },
+  methods: {
+    onSubmit (evt) {
+      evt.preventDefault();
+      alert(JSON.stringify(this.form));
+    },
+    onReset (evt) {
+      evt.preventDefault();
+      /* Reset our form values */
+      this.form.title = '';
+    }
+   } 	
 }
 </script>
