@@ -9,12 +9,7 @@ import App from "./App";
 
 Vue.use(BootstrapVue, axios, VueMoment);
 
-const events = [{
-		id: '0',
-	  	title: 'Test Title', 
-	  	description: '',
-	  	startDate: ''
-	 }];
+const events = [];
 
 new Vue({
   el: '#app',
