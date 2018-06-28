@@ -2,36 +2,32 @@ import Vue from 'vue'
 import Config from './config/config'
 import BootstrapVue from 'bootstrap-vue'
 import axios from 'axios'
+import VueMoment from 'vue-moment'
+
 
 import App from "./App";
 
-Vue.use(BootstrapVue, axios);
+Vue.use(BootstrapVue, axios, VueMoment);
 
-new Vue({
-  el: "#app",
-  render: h => <App />,
-  data() {
-    return {
-	  events: [{
+const events = [{
 		id: '0',
 	  	title: 'Test Title', 
 	  	description: '',
 	  	startDate: ''
-	  }],
-	  event: {
-	  	id: '0',
-	  	title: 'Test Title', 
-	  	description: '',
-	  	startDate: ''  
-	  }
-	};
+	 }];
+
+new Vue({
+  el: '#app',
+  render: h => h(App),
+  data:{
+  	  events
+  },
+  computed: {
 	},
-	computed: {
-	},
-	mounted() {
+  mounted() {
 		this.getPosts();
 	},
-	methods: {
+  methods: {
 	    getPosts() {
 	      axios.get(Config.ROOT_API+'/list').then((response) => {
 	        this.events = response.data;
