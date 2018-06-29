@@ -1,7 +1,9 @@
 <template>
 	<b-container>
-	  		
+	
+	  		<b-row>
 	  		<h2>Veranstalungs-Kalender</h2>
+	  		</b-row>
 	  			
 	  		<b-row v-if="this.$parent.events.length > 0">
 	  		
@@ -22,9 +24,16 @@
 	  		
 	  		</b-row>
 	  		
-	  		<b-row>
+	  		<b-row class="py-3 px-2">
+			  
+			  <b-col style="max-width: 60px;">
+			  <h5>Filter: </h5>
+			  </b-col>
+			  
+			  <b-col>
 			  <b-badge href="#" variant="primary">Filter <span class="dismiss">&times;</span> </b-badge>
-
+			  </b-col>
+			  
 			</b-row>
 	  		
 	  		<b-list-group v-if="this.$parent.events.length > 0">
@@ -46,7 +55,7 @@
 			        	 	<span class="time">{{ event.startDate | dateTime() }} – {{ event.endDate | dateTime() }}</span>
 			        	 </div>
 			        	 <div v-if="new Date(event.startDate).getDay() != new Date(event.endDate).getDay()">
-			        	 	<span class="date">{{ event.startDate | regularDate() }} – {{ event.endDate | regularDate() }}</span><br/>
+			        	 	<span class="date">{{ event.startDate | dateDay() }}. – {{ event.endDate | regularDate() }}</span><br/>
 			        	 </div>
 			        	 
 			        </b-col>
@@ -74,10 +83,10 @@
 			
 			  <div>			
 			  <!-- Modal Component -->
-			  <b-modal id="modal1" title="Event hinzufügen" cancel-title="Abbrechen" ok-title="Speichern">
+			  <b-modal id="modal1" size="lg" title="Event hinzufügen" cancel-title="Abbrechen" @ok="onSubmit" ok-title="Speichern">
 			    
 			    
-			    <b-form @submit="onSubmit" @reset="onReset">
+			    <b-form @submit="onSubmit" @reset="onReset" v-if="status == 'idle'">
 			      <b-form-group id="inputEventTitle"
 			                    label="Titel"
 			                    label-for="inputEventTitle"
@@ -115,6 +124,70 @@
 				     </b-col>
 				 </b-row>
 
+				<b-row>
+					<b-col md="6" sm="12">
+					
+					<b-form-group id="inputEventRoomLabel"
+				                    label="Raum"
+				                    label-for="inputEventRoom"
+				                    description="">
+				
+				      <b-form-input id="inputEventRoom"
+	                      type="text"
+	                      v-model="form.room"
+	                      required>
+					  </b-form-input>
+      			
+					 </b-form-group>
+					 
+				     </b-col>
+				     <b-col md="6" sm="12">
+					 	<b-form-group id="inputEventLocationLabel"
+				                    label="Standort"
+				                    label-for="inputEventLocation"
+				                    description="">
+				        
+					        <b-form-select id="inputEventLocation"
+					                      :options="locations"
+					                      required
+					                      v-model="form.location">
+					        </b-form-select>					
+						</b-form-group>
+				     </b-col>
+				 </b-row>
+				 
+				 <b-row>
+					<b-col md="6" sm="12">
+					
+					<b-form-group id="inputEventContactLabel"
+				                    label="Ansprechpartner"
+				                    label-for="inputEventContact"
+				                    description="">
+				
+				      <b-form-input id="inputEventRoom"
+	                      type="text"
+	                      v-model="form.organiser"
+	                      required>
+					  </b-form-input>
+      			
+					 </b-form-group>
+					 
+				     </b-col>
+				     <b-col md="6" sm="12">
+					 	<b-form-group id="inputEventBrandLabel"
+				                    label="Veranstalter"
+				                    label-for="inputEventBrand"
+				                    description="">
+				        
+					        <b-form-select id="inputEventBrand"
+					                      :options="brands"
+					                      required
+					                      v-model="form.brand">
+					        </b-form-select>					
+						</b-form-group>
+				     </b-col>
+				 </b-row>
+
 			      <b-form-group id="inputEventDescription"
 			                    label="Kurzbeschreibung"
 			                    label-for="inputEventDescription"
@@ -147,6 +220,7 @@
 
 </template>
 
+
 <script>
 	
 import moment from 'moment'
@@ -168,6 +242,7 @@ export default {
   },
   data() {
 	return { 
+		status: 'idle',
 		form: {
 	        title: '',
 	        startDate: { 
@@ -195,9 +270,18 @@ export default {
 	        description: '',
 	        room: '',
 	        location: '',
-	        brand: '',
-     }
-    };
+			organiser: '',
+	        brand: ''
+		},
+		locations: [
+			{ text: 'Standort wählen', value: null },
+			'Berlin', 'Lübeck',
+		],
+		brands: [
+			{ text: 'Unternehmen wählen', value: null },
+			'Hypoport', 'EUROPACE', 'Genopace', 'FINMAS'
+		]		
+     };
   },
   filters: {
 	regularDate(date) {
@@ -216,6 +300,7 @@ export default {
   },
   methods: {
     onSubmit (evt) {
+	  this.status = 'load';
       evt.preventDefault();
       alert(JSON.stringify(this.form));
     },
