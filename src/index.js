@@ -32,20 +32,17 @@ jQuery.extend(true, jQuery.fn.datetimepicker.defaults, {
 new Vue({
   el: '#app',
   render: h => h(App),
-  data:{
-  	  events
+  data() {
+	return { 
+	  status: 'init',
+  	}
   },
   computed: {
 	},
   mounted() {
-		this.getPosts();
 	},
   methods: {
-	    getPosts() {
-	      axios.get(Config.ROOT_API+'/list').then((response) => {
-	        this.events = response.data;
-	      }).catch( error => { console.log(error); });
-	    }
+
   }
 
 });
