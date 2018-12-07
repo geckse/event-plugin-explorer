@@ -22,6 +22,9 @@
     "install": "^0.12.1",
     "npm": "^6.2.0",
     "vue-bootstrap-datetimepicker": "^4.1.4",
-    "vue-moment": "^4.0.0"
+    "vue-linkify": "^1.0.1",
+    "vue-markdown": "^2.2.4",
+    "vue-moment": "^4.0.0",
+    "vue-nl2br": "0.0.5"
   }
 }
